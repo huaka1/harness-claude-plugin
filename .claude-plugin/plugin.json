@@ -1,0 +1,18 @@
+{
+  "name": "harness",
+  "description": "Project-local workflow wrapper around Superpowers with memory, handoff, and Codex review gates",
+  "version": "0.1.0",
+  "author": {
+    "name": "huangaokai"
+  },
+  "homepage": "https://github.com/huangaokai/agent-study",
+  "repository": "https://github.com/huangaokai/agent-study",
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "superpowers",
+    "workflow",
+    "project-memory",
+    "codex-review"
+  ]
+}
