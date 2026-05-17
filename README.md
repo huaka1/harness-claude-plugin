@@ -2,6 +2,23 @@
 
 Harness is a Claude Code plugin that wraps Superpowers with project-local memory, resumable workspaces, and Codex review gates.
 
+## Install From GitHub
+
+Claude Code plugins are loaded from a local plugin directory. Clone this repository first, then start Claude Code with `--plugin-dir`.
+
+```bash
+git clone https://github.com/huaka1/harness-claude-plugin.git ~/.claude/plugins/harness-claude-plugin
+claude --plugin-dir ~/.claude/plugins/harness-claude-plugin
+```
+
+If you already cloned it:
+
+```bash
+cd ~/.claude/plugins/harness-claude-plugin
+git pull
+claude --plugin-dir ~/.claude/plugins/harness-claude-plugin
+```
+
 ## Install For Local Testing
 
 From this repository:
