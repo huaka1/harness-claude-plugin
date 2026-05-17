@@ -11,9 +11,8 @@ import sys
 
 context = sys.argv[1]
 print(json.dumps({
-    "hookSpecificOutput": {
-        "hookEventName": "Stop",
-        "additionalContext": context,
-    }
+    "decision": "approve",
+    "reason": "Harness stop hook completed.",
+    "systemMessage": context,
 }))
 PY
