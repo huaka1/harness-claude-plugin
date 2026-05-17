@@ -1,0 +1,221 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 980" width="1200" height="980">
+  <style>
+    text { font-family: 'Helvetica Neue', Helvetica, Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif; }
+    .title { font-size: 24px; font-weight: 700; fill: #111827; }
+    .subtitle { font-size: 13px; fill: #6b7280; }
+    .box-title { font-size: 14px; font-weight: 700; fill: #111827; }
+    .box-sub { font-size: 12px; fill: #4b5563; }
+    .lane { font-size: 13px; font-weight: 700; fill: #374151; }
+    .small { font-size: 11px; fill: #6b7280; }
+    .label { font-size: 11px; fill: #374151; }
+  </style>
+
+  <defs>
+    <marker id="arrow-blue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#2563eb"/>
+    </marker>
+    <marker id="arrow-green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#16a34a"/>
+    </marker>
+    <marker id="arrow-purple" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#9333ea"/>
+    </marker>
+    <marker id="arrow-red" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#dc2626"/>
+    </marker>
+    <marker id="arrow-orange" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#ea580c"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="980" fill="#ffffff"/>
+  <text x="48" y="48" class="title">Harness Claude Plugin Workflow</text>
+  <text x="48" y="72" class="subtitle">Claude Code 做主控；Superpowers 做工程流程；Harness 通过 commands + hooks 插入项目记忆、Codex gate、handoff；finish 由你手动决定。</text>
+
+  <rect x="32" y="105" width="1128" height="120" rx="8" fill="#f9fafb" stroke="#e5e7eb"/>
+  <text x="48" y="130" class="lane">入口与项目状态</text>
+
+  <rect x="32" y="255" width="1128" height="170" rx="8" fill="#eff6ff" stroke="#bfdbfe"/>
+  <text x="48" y="280" class="lane">Superpowers 主链路</text>
+
+  <rect x="32" y="455" width="1128" height="170" rx="8" fill="#faf5ff" stroke="#e9d5ff"/>
+  <text x="48" y="480" class="lane">执行、评审与修正</text>
+
+  <rect x="32" y="655" width="1128" height="100" rx="8" fill="#f0fdf4" stroke="#bbf7d0"/>
+  <text x="48" y="680" class="lane">学习沉淀与用户 finish</text>
+
+  <rect x="32" y="785" width="1128" height="110" rx="8" fill="#fff7ed" stroke="#fed7aa"/>
+  <text x="48" y="810" class="lane">Claude Code Hooks 旁路</text>
+
+  <!-- Entry lane nodes -->
+  <rect x="64" y="150" width="150" height="54" rx="8" fill="#ffffff" stroke="#d1d5db" stroke-width="1.5"/>
+  <text x="139" y="172" text-anchor="middle" class="box-title">用户输入</text>
+  <text x="139" y="190" text-anchor="middle" class="box-sub">/harness &lt;goal&gt;</text>
+
+  <rect x="264" y="150" width="170" height="54" rx="8" fill="#ffffff" stroke="#d1d5db" stroke-width="1.5"/>
+  <text x="349" y="172" text-anchor="middle" class="box-title">Claude Code</text>
+  <text x="349" y="190" text-anchor="middle" class="box-sub">加载 Harness plugin</text>
+
+  <rect x="484" y="150" width="190" height="54" rx="8" fill="#ffffff" stroke="#d1d5db" stroke-width="1.5"/>
+  <text x="579" y="172" text-anchor="middle" class="box-title">Start / Resume</text>
+  <text x="579" y="190" text-anchor="middle" class="box-sub">创建或恢复 project</text>
+
+  <rect x="724" y="143" width="204" height="68" rx="8" fill="#ffffff" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="826" y="166" text-anchor="middle" class="box-title">.harness 状态</text>
+  <text x="826" y="184" text-anchor="middle" class="box-sub">active-project / handoff</text>
+  <text x="826" y="200" text-anchor="middle" class="box-sub">status / next-actions</text>
+
+  <rect x="976" y="143" width="150" height="68" rx="8" fill="#ffffff" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="1051" y="166" text-anchor="middle" class="box-title">项目记忆</text>
+  <text x="1051" y="184" text-anchor="middle" class="box-sub">links / pitfalls</text>
+  <text x="1051" y="200" text-anchor="middle" class="box-sub">decisions / commands</text>
+
+  <!-- Main chain nodes -->
+  <rect x="92" y="310" width="176" height="62" rx="8" fill="#ffffff" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="180" y="334" text-anchor="middle" class="box-title">Brainstorming</text>
+  <text x="180" y="352" text-anchor="middle" class="box-sub">明确目标 / 范围 / 约束</text>
+
+  <rect x="332" y="310" width="176" height="62" rx="8" fill="#ffffff" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="420" y="334" text-anchor="middle" class="box-title">Memory Enrichment</text>
+  <text x="420" y="352" text-anchor="middle" class="box-sub">注入最小项目上下文</text>
+
+  <rect x="572" y="310" width="176" height="62" rx="8" fill="#ffffff" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="660" y="334" text-anchor="middle" class="box-title">Writing Plans</text>
+  <text x="660" y="352" text-anchor="middle" class="box-sub">spec / plan / plan.json</text>
+
+  <path d="M 872 302 L 944 341 L 872 380 L 800 341 Z" fill="#ffffff" stroke="#9333ea" stroke-width="1.5"/>
+  <text x="872" y="336" text-anchor="middle" class="box-title">风险够高?</text>
+  <text x="872" y="354" text-anchor="middle" class="box-sub">medium / high</text>
+
+  <rect x="1008" y="310" width="120" height="62" rx="8" fill="#ffffff" stroke="#9333ea" stroke-width="1.5"/>
+  <text x="1068" y="334" text-anchor="middle" class="box-title">Codex Plan</text>
+  <text x="1068" y="352" text-anchor="middle" class="box-sub">review gate</text>
+
+  <!-- Execution lane nodes -->
+  <rect x="92" y="510" width="176" height="62" rx="8" fill="#ffffff" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="180" y="534" text-anchor="middle" class="box-title">Execution</text>
+  <text x="180" y="552" text-anchor="middle" class="box-sub">Claude main / cheap</text>
+
+  <rect x="332" y="510" width="176" height="62" rx="8" fill="#ffffff" stroke="#2563eb" stroke-width="1.5"/>
+  <text x="420" y="534" text-anchor="middle" class="box-title">Verify</text>
+  <text x="420" y="552" text-anchor="middle" class="box-sub">tests / checks / diff</text>
+
+  <path d="M 632 502 L 704 541 L 632 580 L 560 541 Z" fill="#ffffff" stroke="#9333ea" stroke-width="1.5"/>
+  <text x="632" y="536" text-anchor="middle" class="box-title">需要终审?</text>
+  <text x="632" y="554" text-anchor="middle" class="box-sub">diff / API / 数据</text>
+
+  <rect x="804" y="510" width="142" height="62" rx="8" fill="#ffffff" stroke="#9333ea" stroke-width="1.5"/>
+  <text x="875" y="534" text-anchor="middle" class="box-title">Codex Final</text>
+  <text x="875" y="552" text-anchor="middle" class="box-sub">final review gate</text>
+
+  <rect x="1002" y="510" width="126" height="62" rx="8" fill="#ffffff" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="1065" y="534" text-anchor="middle" class="box-title">Fix Loop</text>
+  <text x="1065" y="552" text-anchor="middle" class="box-sub">重要问题回修</text>
+
+  <!-- Learning lane nodes -->
+  <rect x="136" y="700" width="190" height="48" rx="8" fill="#ffffff" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="231" y="720" text-anchor="middle" class="box-title">Harness Learn</text>
+  <text x="231" y="738" text-anchor="middle" class="box-sub">links / pitfalls / decisions</text>
+
+  <rect x="414" y="700" width="190" height="48" rx="8" fill="#ffffff" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="509" y="720" text-anchor="middle" class="box-title">Handoff</text>
+  <text x="509" y="738" text-anchor="middle" class="box-sub">status / next-actions</text>
+
+  <rect x="692" y="700" width="190" height="48" rx="8" fill="#ffffff" stroke="#16a34a" stroke-width="1.5"/>
+  <text x="787" y="720" text-anchor="middle" class="box-title">你手动 Finish</text>
+  <text x="787" y="738" text-anchor="middle" class="box-sub">merge / PR / cleanup</text>
+
+  <!-- Main arrows -->
+  <path d="M 214 177 L 264 177" stroke="#2563eb" stroke-width="2" fill="none" marker-end="url(#arrow-blue)"/>
+  <path d="M 434 177 L 484 177" stroke="#2563eb" stroke-width="2" fill="none" marker-end="url(#arrow-blue)"/>
+  <path d="M 674 177 L 724 177" stroke="#16a34a" stroke-width="2" fill="none" marker-end="url(#arrow-green)"/>
+  <path d="M 928 177 L 976 177" stroke="#16a34a" stroke-width="2" fill="none" marker-end="url(#arrow-green)"/>
+
+  <path d="M 180 225 L 180 310" stroke="#2563eb" stroke-width="2" fill="none" marker-end="url(#arrow-blue)"/>
+  <path d="M 268 341 L 332 341" stroke="#2563eb" stroke-width="2" fill="none" marker-end="url(#arrow-blue)"/>
+  <path d="M 508 341 L 572 341" stroke="#2563eb" stroke-width="2" fill="none" marker-end="url(#arrow-blue)"/>
+  <path d="M 748 341 L 800 341" stroke="#2563eb" stroke-width="2" fill="none" marker-end="url(#arrow-blue)"/>
+  <path d="M 944 341 L 1008 341" stroke="#9333ea" stroke-width="2" fill="none" marker-end="url(#arrow-purple)"/>
+
+  <path d="M 872 380 L 872 438 L 180 438 L 180 510" stroke="#2563eb" stroke-width="2" fill="none" marker-end="url(#arrow-blue)"/>
+  <rect x="886" y="394" width="52" height="20" rx="4" fill="#ffffff" opacity="0.95"/>
+  <text x="912" y="409" text-anchor="middle" class="label">低风险</text>
+
+  <path d="M 1068 372 L 1068 438 L 180 438 L 180 510" stroke="#9333ea" stroke-width="2" fill="none" marker-end="url(#arrow-purple)"/>
+  <rect x="1016" y="394" width="92" height="20" rx="4" fill="#ffffff" opacity="0.95"/>
+  <text x="1062" y="409" text-anchor="middle" class="label">通过后执行</text>
+
+  <path d="M 268 541 L 332 541" stroke="#2563eb" stroke-width="2" fill="none" marker-end="url(#arrow-blue)"/>
+  <path d="M 508 541 L 560 541" stroke="#2563eb" stroke-width="2" fill="none" marker-end="url(#arrow-blue)"/>
+  <path d="M 704 541 L 804 541" stroke="#9333ea" stroke-width="2" fill="none" marker-end="url(#arrow-purple)"/>
+  <path d="M 946 541 L 1002 541" stroke="#dc2626" stroke-width="2" fill="none" marker-end="url(#arrow-red)"/>
+  <path d="M 1065 510 L 1065 470 L 180 470 L 180 510" stroke="#dc2626" stroke-width="2" fill="none" marker-end="url(#arrow-red)"/>
+
+  <path d="M 632 580 L 632 641 L 231 641 L 231 700" stroke="#16a34a" stroke-width="2" fill="none" marker-end="url(#arrow-green)"/>
+  <rect x="642" y="594" width="58" height="20" rx="4" fill="#ffffff" opacity="0.95"/>
+  <text x="671" y="609" text-anchor="middle" class="label">不需要</text>
+
+  <path d="M 875 572 L 875 641 L 231 641 L 231 700" stroke="#16a34a" stroke-width="2" fill="none" marker-end="url(#arrow-green)"/>
+  <rect x="888" y="594" width="46" height="20" rx="4" fill="#ffffff" opacity="0.95"/>
+  <text x="911" y="609" text-anchor="middle" class="label">通过</text>
+
+  <path d="M 326 724 L 414 724" stroke="#16a34a" stroke-width="2" fill="none" marker-end="url(#arrow-green)"/>
+  <path d="M 604 724 L 692 724" stroke="#16a34a" stroke-width="2" fill="none" marker-end="url(#arrow-green)"/>
+
+  <!-- Memory feedback arrows -->
+  <path d="M 231 700 L 231 632 L 1051 632 L 1051 211" stroke="#16a34a" stroke-width="1.8" stroke-dasharray="6 5" fill="none" marker-end="url(#arrow-green)"/>
+  <rect x="884" y="620" width="126" height="20" rx="4" fill="#ffffff" opacity="0.95"/>
+  <text x="947" y="635" text-anchor="middle" class="label">沉淀长期项目记忆</text>
+
+  <path d="M 1051 143 L 1051 118 L 420 118 L 420 310" stroke="#16a34a" stroke-width="1.8" stroke-dasharray="6 5" fill="none" marker-end="url(#arrow-green)"/>
+  <rect x="648" y="106" width="118" height="20" rx="4" fill="#ffffff" opacity="0.95"/>
+  <text x="707" y="121" text-anchor="middle" class="label">下次只注入相关记忆</text>
+
+  <!-- Hook lane nodes -->
+  <rect x="88" y="835" width="190" height="44" rx="8" fill="#ffffff" stroke="#ea580c" stroke-width="1.5"/>
+  <text x="183" y="854" text-anchor="middle" class="box-title">SessionStart</text>
+  <text x="183" y="871" text-anchor="middle" class="box-sub">注入 active handoff</text>
+
+  <rect x="348" y="835" width="190" height="44" rx="8" fill="#ffffff" stroke="#ea580c" stroke-width="1.5"/>
+  <text x="443" y="854" text-anchor="middle" class="box-title">PreToolUse</text>
+  <text x="443" y="871" text-anchor="middle" class="box-sub">危险命令拦截</text>
+
+  <rect x="608" y="835" width="190" height="44" rx="8" fill="#ffffff" stroke="#ea580c" stroke-width="1.5"/>
+  <text x="703" y="854" text-anchor="middle" class="box-title">PostToolUse</text>
+  <text x="703" y="871" text-anchor="middle" class="box-sub">记录 edit/bash/test</text>
+
+  <rect x="868" y="835" width="190" height="44" rx="8" fill="#ffffff" stroke="#ea580c" stroke-width="1.5"/>
+  <text x="963" y="854" text-anchor="middle" class="box-title">Stop</text>
+  <text x="963" y="871" text-anchor="middle" class="box-sub">提醒 handoff / learn</text>
+
+  <!-- Hook arrows into main flow -->
+  <path d="M 183 835 L 183 780 L 579 780 L 579 204" stroke="#ea580c" stroke-width="1.8" stroke-dasharray="6 5" fill="none" marker-end="url(#arrow-orange)"/>
+  <rect x="292" y="768" width="116" height="20" rx="4" fill="#ffffff" opacity="0.95"/>
+  <text x="350" y="783" text-anchor="middle" class="label">启动时读状态</text>
+
+  <path d="M 443 835 L 443 770 L 180 770 L 180 572" stroke="#ea580c" stroke-width="1.8" stroke-dasharray="6 5" fill="none" marker-end="url(#arrow-orange)"/>
+  <rect x="244" y="758" width="126" height="20" rx="4" fill="#ffffff" opacity="0.95"/>
+  <text x="307" y="773" text-anchor="middle" class="label">工具执行前检查</text>
+
+  <path d="M 703 835 L 703 770 L 420 770 L 420 572" stroke="#ea580c" stroke-width="1.8" stroke-dasharray="6 5" fill="none" marker-end="url(#arrow-orange)"/>
+  <rect x="526" y="758" width="126" height="20" rx="4" fill="#ffffff" opacity="0.95"/>
+  <text x="589" y="773" text-anchor="middle" class="label">工具执行后落库</text>
+
+  <path d="M 963 835 L 963 770 L 509 770 L 509 748" stroke="#ea580c" stroke-width="1.8" stroke-dasharray="6 5" fill="none" marker-end="url(#arrow-orange)"/>
+  <rect x="706" y="758" width="124" height="20" rx="4" fill="#ffffff" opacity="0.95"/>
+  <text x="768" y="773" text-anchor="middle" class="label">停止时补 handoff</text>
+
+  <!-- Legend -->
+  <g transform="translate(48, 944)">
+    <path d="M 0 0 L 36 0" stroke="#2563eb" stroke-width="2" marker-end="url(#arrow-blue)"/>
+    <text x="46" y="4" class="small">主流程</text>
+    <path d="M 120 0 L 156 0" stroke="#16a34a" stroke-width="2" marker-end="url(#arrow-green)"/>
+    <text x="166" y="4" class="small">状态/记忆</text>
+    <path d="M 270 0 L 306 0" stroke="#9333ea" stroke-width="2" marker-end="url(#arrow-purple)"/>
+    <text x="316" y="4" class="small">Codex gate</text>
+    <path d="M 430 0 L 466 0" stroke="#dc2626" stroke-width="2" marker-end="url(#arrow-red)"/>
+    <text x="476" y="4" class="small">回修循环</text>
+    <path d="M 600 0 L 636 0" stroke="#ea580c" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#arrow-orange)"/>
+    <text x="646" y="4" class="small">Claude Code hooks</text>
+  </g>
+</svg>
