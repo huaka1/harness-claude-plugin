@@ -16,16 +16,12 @@ Workflow:
 1. Run:
 
 ```bash
-plugin_root="${CLAUDE_PLUGIN_ROOT:-}"
-if [ -z "$plugin_root" ]; then
-  state_script="$(find "$HOME/.claude/plugins/cache" -path "*/harness_state.py" -print 2>/dev/null | sort | tail -n 1)"
-  plugin_root="${state_script%/scripts/harness_state.py}"
-fi
-if [ -z "$plugin_root" ] || [ ! -f "$plugin_root/scripts/harness_state.py" ]; then
-  echo "Harness plugin root not found. Run: claude plugin marketplace update harness && claude plugin update harness"
+state_script="$(find "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/plugins/cache" "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/plugins/marketplaces" -path "*/scripts/harness_state.py" -print 2>/dev/null | sort | tail -n 1)"
+if [ -z "$state_script" ] || [ ! -f "$state_script" ]; then
+  echo "Harness state script not found. Reinstall with: claude plugin uninstall harness --scope user -y && claude plugin install harness@harness --scope user"
   exit 1
 fi
-python3 "$plugin_root/scripts/harness_state.py" start --cwd "$PWD" --goal "$ARGUMENTS"
+python3 "$state_script" start --cwd "$PWD" --goal "$ARGUMENTS"
 ```
 
 2. Read the command output and treat it as the authoritative Harness project state for this session.

@@ -25,6 +25,14 @@ claude plugin marketplace add huaka1/harness-claude-plugin
 claude plugin install harness@harness
 ```
 
+If you already installed an older version and Claude Code keeps using the cached copy, reinstall it:
+
+```bash
+claude plugin marketplace update harness
+claude plugin uninstall harness --scope user -y
+claude plugin install harness@harness --scope user
+```
+
 ## Install From Git Clone
 
 Claude Code can also load plugins from a local plugin directory.
