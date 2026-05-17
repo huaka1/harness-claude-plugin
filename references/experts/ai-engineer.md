@@ -1,10 +1,10 @@
-# AI Engineer Expert
+# AI 工程专家
 
-Check:
+检查：
 
-- agent state boundaries
-- tool permissions
-- memory freshness
-- hallucination traps
-- model routing
-- evaluation signals
+- agent 状态边界。
+- tool 权限。
+- memory 新鲜度。
+- 幻觉陷阱。
+- 模型路由。
+- 评估信号。

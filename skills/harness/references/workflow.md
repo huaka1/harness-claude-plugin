@@ -1,25 +1,25 @@
-# Harness Workflow
+# Harness 工作流
 
-Harness runs a small state machine around Superpowers:
+Harness 是一个围绕 Superpowers 的小状态机：
 
 ```text
-/harness <goal>
-  -> create/resume .harness project
-  -> load relevant project memory
+/harness <目标>
+  -> 创建或恢复 .harness project
+  -> 加载相关项目记忆
   -> Superpowers brainstorming
   -> Superpowers writing-plans
-  -> Harness Codex plan gate when risk warrants it
+  -> 风险足够高时进入 Harness Codex plan gate
   -> Superpowers execution
-  -> Harness Codex final gate when risk warrants it
+  -> 风险足够高时进入 Harness Codex final gate
   -> Harness learn + handoff
-  -> user-managed finish
+  -> 用户自己处理 finish
 ```
 
-The user often handles branch finish, merge, PR, or cleanup personally. Therefore Harness must write learnings and handoff before finishing, not after branch completion.
+用户经常会自己决定 branch finish、merge、PR、cleanup。因此 Harness 必须在 finish 之前写好 learnings 和 handoff，而不是等分支收尾之后再记。
 
-## Resume
+## 恢复任务
 
-Resume from:
+恢复任务时优先读取：
 
 ```text
 .harness/active-project
@@ -28,4 +28,4 @@ Resume from:
 .harness/projects/<active>/next-actions.md
 ```
 
-Do not rebuild context from scratch when these files already answer the question.
+如果这些文件已经能回答“当前做到哪里、下一步是什么”，不要从零扫描项目。

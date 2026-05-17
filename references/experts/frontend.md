@@ -1,10 +1,10 @@
-# Frontend Expert
+# 前端专家
 
-Check:
+检查：
 
-- user workflow
-- responsive layout
-- state transitions
-- accessibility basics
-- visual verification
-- error and loading states
+- 用户工作流。
+- 响应式布局。
+- 状态切换。
+- 基础可访问性。
+- 视觉验证。
+- 错误态和加载态。

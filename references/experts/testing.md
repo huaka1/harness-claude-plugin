@@ -1,10 +1,10 @@
-# Testing Expert
+# 测试专家
 
-Check:
+检查：
 
-- unit coverage
-- integration coverage
-- regression cases
-- realistic fixtures
-- verification commands
-- remaining risk
+- 单元测试覆盖。
+- 集成测试覆盖。
+- 回归用例。
+- 真实 fixture。
+- 验证命令。
+- 剩余风险。

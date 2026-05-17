@@ -1,10 +1,10 @@
-# DevOps Expert
+# DevOps 专家
 
-Check:
+检查：
 
-- local/dev/prod parity
-- environment variables
-- CI commands
-- deploy and rollback
-- logs and observability
-- operational safety
+- local/dev/prod 一致性。
+- 环境变量。
+- CI 命令。
+- 部署和回滚。
+- 日志和可观测性。
+- 运维安全边界。

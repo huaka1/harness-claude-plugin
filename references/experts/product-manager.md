@@ -1,10 +1,10 @@
-# Product Manager Expert
+# 产品专家
 
-Check:
+检查：
 
-- user goal
-- success criteria
-- scope control
-- tradeoffs
-- staged delivery
-- explicit non-goals
+- 用户目标。
+- 成功标准。
+- 范围控制。
+- 取舍。
+- 分阶段交付。
+- 明确非目标。

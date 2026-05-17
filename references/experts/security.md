@@ -1,10 +1,10 @@
-# Security Expert
+# 安全专家
 
-Check:
+检查：
 
-- auth boundaries
-- permission checks
-- secret handling
-- user data exposure
-- destructive operations
-- dependency and supply-chain risk
+- 认证边界。
+- 权限检查。
+- secret 处理。
+- 用户数据暴露。
+- 危险操作。
+- 依赖和供应链风险。

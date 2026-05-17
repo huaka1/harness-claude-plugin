@@ -1,21 +1,21 @@
-# Superpowers Integration
+# Superpowers 集成方式
 
-Harness wraps Superpowers. It should not copy or fork Superpowers skills.
+Harness 包住 Superpowers，不复制、不 fork Superpowers skills。
 
-Mapping:
+映射关系：
 
-- design or behavior change: use `superpowers:brainstorming`
-- implementation plan: use `superpowers:writing-plans`
-- plan execution: use `superpowers:executing-plans` or `superpowers:subagent-driven-development`
-- debugging: use `superpowers:systematic-debugging`
-- final verification: use `superpowers:verification-before-completion`
+- 设计或行为变化：使用 `superpowers:brainstorming`。
+- 实现计划：使用 `superpowers:writing-plans`。
+- 执行计划：使用 `superpowers:executing-plans` 或 `superpowers:subagent-driven-development`。
+- Debug：使用 `superpowers:systematic-debugging`。
+- 最终验证：使用 `superpowers:verification-before-completion`。
 
-Harness adds:
+Harness 额外补充：
 
-- project-local memory
-- `.harness/projects` workspace
-- Codex plan/final gates
-- hook-based handoff reminders
-- durable lessons, links, pitfalls, and decisions
+- 项目本地记忆。
+- `.harness/projects` 工作区。
+- Codex plan/final gate。
+- hook 提醒和 handoff。
+- 长期 lesson、links、pitfalls、decisions。
 
-If Superpowers wants to proceed automatically, allow it. Insert Harness gates only at natural checkpoints: after plan creation and before final completion.
+如果 Superpowers 已经自然往后推进，不要打断它。Harness 只在自然检查点插入 gate：计划生成后、最终完成前。

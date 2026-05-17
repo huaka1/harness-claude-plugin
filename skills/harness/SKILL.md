@@ -1,107 +1,107 @@
 ---
 name: harness
-description: Use when the user invokes /harness, asks to run a project-local chained workflow, wants Claude Code to wrap Superpowers with memory/review gates, or wants work to be resumable through .harness files.
+description: 当用户调用 /harness、想启动项目级链式工作流、想让 Claude Code 包住 Superpowers 并加入项目记忆/review gate、或希望工作能通过 .harness 文件恢复时使用。
 ---
 
 # Harness
 
-Harness is a project-local workflow layer around Superpowers.
+Harness 是一层项目本地工作流。它包在 Superpowers 外面，用来处理项目记忆、恢复上下文、评审关卡和交接记录。
 
-Use it to:
+它的用途：
 
-- start or resume a project workspace in `.harness/projects/`
-- inject project memory from `.harness/context/`
-- keep handoff/status/next-actions current
-- place Codex review gates around medium/high-risk plans and final diffs
-- record links, pitfalls, constraints, and decisions that should prevent repeated mistakes
+- 在 `.harness/projects/` 中创建或恢复一个项目工作区。
+- 从 `.harness/context/` 注入项目记忆。
+- 持续维护 `handoff.md`、`status.md`、`next-actions.md`。
+- 在中高风险计划和最终 diff 前后插入 Codex review gate。
+- 记录链接、踩坑、约束和决策，避免后续重复犯错。
 
-Do not use Harness as a replacement for Superpowers. Harness wraps Superpowers.
+不要把 Harness 当成 Superpowers 的替代品。Harness 的职责是包装 Superpowers，不是复制 Superpowers。
 
-## Required Flow
+## 必走流程
 
-1. Establish or resume the active Harness project with `harness_state.py`.
-2. Read the active project files before substantial work.
-3. Use Superpowers for the engineering workflow:
-   - `superpowers:brainstorming` before creative/design/behavior changes.
-   - `superpowers:writing-plans` before multi-step implementation.
-   - `superpowers:executing-plans` or `superpowers:subagent-driven-development` for execution when appropriate.
-4. Insert Harness gates:
-   - plan gate before executing medium/high-risk plans.
-   - final gate before saying medium/high-risk work is ready.
-5. Before stopping, update:
+1. 先用 `harness_state.py` 创建或恢复 active Harness project。
+2. 做任何重活之前，先读 active project 的关键文件。
+3. 工程流程继续使用 Superpowers：
+   - 有创意、设计、功能、行为变化时，先用 `superpowers:brainstorming`。
+   - 多步骤实现前，用 `superpowers:writing-plans`。
+   - 执行计划时，按情况使用 `superpowers:executing-plans` 或 `superpowers:subagent-driven-development`。
+4. 插入 Harness gate：
+   - 中高风险计划执行前，走 plan gate。
+   - 中高风险工作完成前，走 final gate。
+5. 停止工作前，更新：
    - `.harness/projects/<active>/status.md`
    - `.harness/projects/<active>/next-actions.md`
    - `.harness/projects/<active>/handoff.md`
-6. When new durable knowledge appears, update project memory:
+6. 出现新的长期有效信息时，更新项目记忆：
    - `.harness/context/links.md`
    - `.harness/context/pitfalls.md`
    - `.harness/context/decisions.md`
    - `.harness/context/constraints.md`
    - `.harness/context/commands.md`
 
-## Mode Classification
+## 任务模式
 
-Classify the active task early:
+尽早判断当前任务属于哪类：
 
-- `research`: gather evidence, compare options, produce recommendation.
-- `implementation`: modify code or configuration.
-- `debug`: investigate a failure and fix root cause.
-- `review`: inspect existing changes or plans.
-- `migration`: schema/storage/platform transition.
-- `operation`: deployment, cron, production, credentials, or environment work.
-- `mixed`: multiple modes.
+- `research`: 调研、证据整理、方案比较、输出建议。
+- `implementation`: 修改代码或配置。
+- `debug`: 排查失败、定位根因、修复问题。
+- `review`: 审查已有变更、计划或方案。
+- `migration`: schema、存储、平台迁移。
+- `operation`: 部署、cron、生产环境、凭据、环境问题。
+- `mixed`: 多种模式混合。
 
-Use `mixed` when unsure.
+不确定时使用 `mixed`。
 
-## Memory Rules
+## 记忆规则
 
-Prefer stable, compact project memory over large transcripts.
+优先保存稳定、紧凑、可复用的项目记忆，不要保存大段聊天记录。
 
-Save:
+应该保存：
 
-- durable facts about the codebase or business
-- accepted and rejected decisions
-- commands that are known to work
-- pitfalls that caused failed attempts
-- links the user provided as authoritative sources
+- 代码库或业务的长期事实。
+- 已接受和已拒绝的决策。
+- 已验证可用的命令。
+- 导致失败的踩坑模式。
+- 用户补充的权威链接。
 
-Do not save:
+不要保存：
 
-- full logs unless they are short and diagnostic
-- sensitive secrets
-- large docs copied from the web
-- speculative facts that were not verified
+- 大段日志，除非很短且有诊断价值。
+- secrets、token、密码等敏感信息。
+- 从网页复制的大段文档。
+- 没有验证过的猜测。
 
-For links, save the URL, why it matters, when to use it, and keywords that should trigger re-checking it. Do not freeze long external content into memory when the link should be checked for current docs.
+对于链接，保存 URL、为什么重要、什么时候该看、哪些关键词会触发重新检查。不要把容易过期的外部文档全文冻结到记忆里；需要时重新打开链接看最新内容。
 
-## Review Gates
+## Review Gate
 
-Use Codex as a reviewer, not as the default executor.
+Codex 是 reviewer，不是默认 executor。
 
-Plan gate applies to:
+Plan gate 适用于：
 
-- architecture direction
-- cross-module changes
-- database/schema/migration work
-- security, permission, or user data handling
-- unclear task boundaries
-- medium/high-risk execution plans
+- 架构方向。
+- 跨模块改动。
+- 数据库、schema、迁移。
+- 安全、权限、用户数据。
+- 任务边界不清。
+- 中高风险执行计划。
 
-Final gate applies to:
+Final gate 适用于：
 
-- meaningful code diff
-- public API or data model changes
-- core logic changes
-- weak verification
-- user-requested review
+- 有实质代码 diff。
+- 公共 API 或数据模型变化。
+- 核心逻辑变化。
+- 验证不足。
+- 用户明确要求 review。
 
-## References
+## 参考文件
 
-Read only the relevant reference file:
+只读取当前任务真正需要的 reference：
 
-- `references/workflow.md` for the chained workflow.
-- `references/project-memory.md` for `.harness/context` rules.
-- `references/model-routing.md` for DeepSeek/Codex/MiniMax roles.
-- `references/codex-gates.md` for plan/final review gates.
-- `references/superpowers-integration.md` for how Harness wraps Superpowers.
-- `references/project-files.md` for file layout and semantics.
+- `references/workflow.md`: 整体链式流程。
+- `references/project-memory.md`: `.harness/context` 的记忆规则。
+- `references/model-routing.md`: DeepSeek、Codex、MiniMax 的角色分工。
+- `references/codex-gates.md`: plan/final review gate。
+- `references/superpowers-integration.md`: Harness 如何包住 Superpowers。
+- `references/project-files.md`: 文件结构和语义。

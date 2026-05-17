@@ -1,6 +1,6 @@
-# Project Files
+# 项目文件
 
-Each repository may contain:
+每个代码仓库可以有自己的：
 
 ```text
 .harness/
@@ -13,22 +13,22 @@ Each repository may contain:
 
 ## Project Workspace
 
-`project-YYYYMMDD-HHMMSS` is a goal workspace, not a Claude session and not a git branch. It can span multiple Claude sessions.
+`project-YYYYMMDD-HHMMSS` 是一个目标工作区，不是 Claude session，也不是 git branch。它可以跨多个 Claude Code 会话延续。
 
-Files:
+文件说明：
 
-- `goal.md`: user goal and scope.
-- `mode.md`: research, implementation, debug, review, migration, operation, or mixed.
-- `status.md`: current state.
-- `next-actions.md`: immediate next steps.
-- `handoff.md`: compact resume context.
-- `transcript.md`: sparse process log.
-- `research/*`: research artifacts.
-- `planning/spec.md`: accepted spec.
-- `planning/plan.md`: implementation plan.
-- `planning/plan.json`: structured task routing when needed.
-- `implementation/changes.md`: what changed.
-- `implementation/verification.md`: tests/checks and results.
-- `reviews/*`: Codex review outputs.
+- `goal.md`: 用户目标和范围。
+- `mode.md`: research、implementation、debug、review、migration、operation 或 mixed。
+- `status.md`: 当前状态。
+- `next-actions.md`: 下一步行动。
+- `handoff.md`: 紧凑恢复上下文。
+- `transcript.md`: 精简过程日志。
+- `research/*`: 调研产物。
+- `planning/spec.md`: 已接受的 spec。
+- `planning/plan.md`: 实现计划。
+- `planning/plan.json`: 需要结构化路由时使用。
+- `implementation/changes.md`: 改了什么。
+- `implementation/verification.md`: 跑了哪些验证，结果如何。
+- `reviews/*`: Codex review 输出。
 
-Keep these files concise. Their purpose is resumption and learning, not a full chat transcript.
+这些文件要短而有用。它们的目的不是保存完整聊天记录，而是帮助恢复任务和沉淀经验。

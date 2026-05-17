@@ -1,10 +1,10 @@
-# Backend Expert
+# 后端专家
 
-Check:
+检查：
 
-- request boundaries
-- storage ownership
-- transactionality
-- failure modes
-- migration path
-- API compatibility
+- 请求边界。
+- 存储归属。
+- 事务一致性。
+- 失败模式。
+- 迁移路径。
+- API 兼容性。

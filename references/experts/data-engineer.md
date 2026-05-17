@@ -1,10 +1,10 @@
-# Data Engineer Expert
+# 数据工程专家
 
-Check:
+检查：
 
-- schema compatibility
-- migration safety
-- backfill strategy
-- data retention
-- search/indexing
-- recovery path
+- schema 兼容性。
+- 迁移安全。
+- backfill 策略。
+- 数据保留。
+- 搜索和索引。
+- 恢复路径。

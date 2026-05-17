@@ -1,17 +1,17 @@
 ---
-description: "Resume the active Harness project"
-argument-hint: "[optional project id or topic]"
+description: "恢复当前 active Harness project"
+argument-hint: "[可选 project id 或主题]"
 ---
 
-Use the `harness` skill, then run:
+使用 `harness` skill，然后运行：
 
 ```bash
 state_script="$(find "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/plugins/cache" "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/plugins/marketplaces" -path "*/scripts/harness_state.py" -print 2>/dev/null | sort | tail -n 1)"
 if [ -z "$state_script" ] || [ ! -f "$state_script" ]; then
-  echo "Harness state script not found. Reinstall with: claude plugin uninstall harness --scope user -y && claude plugin install harness@harness --scope user"
+  echo "找不到 Harness state script。请重装：claude plugin uninstall harness --scope user -y && claude plugin install harness@harness --scope user"
   exit 1
 fi
 python3 "$state_script" resume --cwd "$PWD" --query "$ARGUMENTS"
 ```
 
-Continue from the returned `handoff.md`, `status.md`, and `next-actions.md`. If the project is ambiguous, show the candidates from `.harness/index.md` and ask the user which one to resume.
+从返回的 `handoff.md`、`status.md`、`next-actions.md` 继续。如果 project 不明确，展示 `.harness/index.md` 里的候选项，让用户选择恢复哪一个。

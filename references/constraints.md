@@ -1,10 +1,10 @@
-# Harness Constraints
+# Harness 约束
 
-- Claude Code is the primary workbench.
-- Superpowers remains the engineering workflow backbone.
-- Harness must be project-local and resumable.
-- Project memory lives in `.harness/context/`.
-- Codex is a review gate, not the default executor.
-- MiniMax is not used for deep analysis in MVP.
-- Hooks should help record state, but must not become a hidden heavy automation layer.
-- Do not store secrets in `.harness/`.
+- Claude Code 是默认工作台。
+- Superpowers 是工程流程骨架。
+- Harness 必须是项目本地、可恢复的。
+- 项目记忆放在 `.harness/context/`。
+- Codex 是 review gate，不是默认 executor。
+- MVP 阶段不把 MiniMax 用于深度分析。
+- Hooks 用来辅助记录状态，但不能变成隐藏的重型自动化层。
+- 不要把 secrets 写入 `.harness/`。
