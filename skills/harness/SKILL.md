@@ -76,9 +76,15 @@ Harness 是一层项目本地工作流。它包在 Superpowers 外面，用来�
 
 ## Review Gate
 
-Codex 是 reviewer，不是默认 executor。
+Codex 是 reviewer，不是默认 executor。Harness gate 必须实际调用 Codex CLI，不能让 Claude 自己冒充 Codex 审核。
 
-Plan gate 适用于：
+Plan gate 是设计/计划 review，使用：
+
+```bash
+codex exec -m gpt-5.5 -c 'model_reasoning_effort="high"'
+```
+
+适用于：
 
 - 架构方向。
 - 跨模块改动。
@@ -87,7 +93,13 @@ Plan gate 适用于：
 - 任务边界不清。
 - 中高风险执行计划。
 
-Final gate 适用于：
+Final gate 是最终代码 review，使用：
+
+```bash
+codex exec review --uncommitted -m gpt-5.5 -c 'model_reasoning_effort="high"'
+```
+
+适用于：
 
 - 有实质代码 diff。
 - 公共 API 或数据模型变化。

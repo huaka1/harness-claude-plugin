@@ -1,7 +1,7 @@
 {
   "name": "harness",
   "description": "围绕 Superpowers 的项目本地工作流插件，提供项目记忆、handoff 和 Codex review gate",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "author": {
     "name": "huangaokai"
   },
