@@ -79,6 +79,12 @@ Harness 会在当前代码仓库里写入：
 
 `.harness/projects/project-*` 是目标工作区。它可以跨多个 Claude Code 会话延续。
 
+## 专家模板
+
+`references/experts/` 提供中文专家模板，用来在计划阶段补充产品、架构、后端、前端、AI、数据、安全、测试、DevOps、API 和现实验收视角。
+
+专家模板参考并改写自 [msitarzewski/agency-agents](https://github.com/msitarzewski/agency-agents)，不是整库复制。使用时先看 `references/experts/registry.md`，只选择当前任务最相关的 2-4 个专家。
+
 ## MVP 限制
 
 当前版本还没有实现完整的 PostToolUse 解析、自动 Codex 调用、MiniMax executor 或模型 proxy。第一阶段先固定插件形态和项目本地状态协议。

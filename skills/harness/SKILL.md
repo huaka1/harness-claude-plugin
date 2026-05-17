@@ -119,3 +119,4 @@ codex exec review --base <base-branch> -m gpt-5.5 -c 'model_reasoning_effort="hi
 - `references/codex-gates.md`: plan/final review gate。
 - `references/superpowers-integration.md`: Harness 如何包住 Superpowers。
 - `references/project-files.md`: 文件结构和语义。
+- `../../references/experts/registry.md`: 专家模板路由和计划增强材料。
