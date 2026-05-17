@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "harness",
+  "version": "0.1.0",
+  "description": "Project-local workflow plugins for Claude Code",
+  "owner": {
+    "name": "huangaokai"
+  },
+  "plugins": [
+    {
+      "name": "harness",
+      "description": "Project-local workflow wrapper around Superpowers with memory, handoff, and Codex review gates",
+      "version": "0.1.0",
+      "source": "./",
+      "category": "productivity",
+      "author": {
+        "name": "huangaokai"
+      }
+    }
+  ]
+}
