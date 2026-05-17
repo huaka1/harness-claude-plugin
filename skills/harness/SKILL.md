@@ -93,11 +93,13 @@ codex exec -m gpt-5.5 -c 'model_reasoning_effort="high"'
 - 任务边界不清。
 - 中高风险执行计划。
 
-Final gate 是最终代码 review，使用：
+Final gate 是最终代码 review。优先和主分支/base branch 比较，因为 Superpowers 可能已经在执行过程中 commit：
 
 ```bash
-codex exec review --uncommitted -m gpt-5.5 -c 'model_reasoning_effort="high"'
+codex exec review --base <base-branch> -m gpt-5.5 -c 'model_reasoning_effort="high"'
 ```
+
+如果 base branch 不明确，先问用户主分支是什么。只有确认没有 commit、只需要审未提交工作区时，才使用 `--uncommitted`。
 
 适用于：
 

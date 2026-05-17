@@ -40,11 +40,13 @@ codex exec \
 
 在实现和验证之后、交接之前触发。
 
-Final Gate 是最终代码 review。代码已经实现并完成基本验证后，必须用 `codex exec review --uncommitted`，固定使用 `gpt-5.5` 和 high reasoning：
+Final Gate 是最终代码 review。代码已经实现并完成基本验证后，必须用 `codex exec review`，固定使用 `gpt-5.5` 和 high reasoning。
+
+Superpowers 可能已经在执行过程中 commit，所以 final review 不能固定只用 `--uncommitted`。默认应和主分支/base branch 比较；如果主分支不明确，必须先问用户。
 
 ```bash
 codex exec review \
-  --uncommitted \
+  --base <base-branch> \
   -m gpt-5.5 \
   -c 'model_reasoning_effort="high"' \
   --ephemeral \
@@ -72,6 +74,8 @@ codex exec review \
 ## 命令选择规则
 
 - 审设计、审计划、审任务粒度：用 `codex exec`。
-- 审最终代码 diff：用 `codex exec review --uncommitted`。
+- 审最终代码 diff：优先用 `codex exec review --base <base-branch>`。
+- 只有在明确没有 commit、只需要审工作区未提交内容时，才用 `codex exec review --uncommitted`。
+- 如果不确定主分支/base branch 是什么，先问用户，不要猜一个不可验证的分支。
 - 不要用普通 `codex review`，因为它不方便指定 model、reasoning 和输出文件。
 - 不要让 Claude 自己冒充 Codex 审核；必须实际执行 Codex CLI。
