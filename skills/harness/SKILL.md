@@ -1,26 +1,26 @@
 ---
 name: harness
-description: 当用户调用 /harness、想启动项目级链式工作流、想让 Claude Code 包住 Superpowers 并加入项目记忆/review gate、或希望工作能通过 .harness 文件恢复时使用。
+description: 当用户调用 /harness、想查看 Claude Code 的 Harness 全局项目记忆、想使用 review gate、或需要理解 Harness hooks 如何无感记录项目事件时使用。
 ---
 
 # Harness
 
-Harness 是一层项目本地工作流。它包在 Superpowers 外面，用来处理项目记忆、恢复上下文、评审关卡和交接记录。
+Harness 是 Claude Code 的全局项目记忆增强层。它通过 hooks 无感记录事件，启动时注入已沉淀的项目背景，并保留可选的 Superpowers/review gate 工作流。
 
 它的用途：
 
-- 在 `.harness/projects/` 中创建或恢复一个项目工作区。
-- 从 `.harness/context/` 注入项目记忆。
-- 持续维护 `handoff.md`、`status.md`、`next-actions.md`。
+- 默认在 `~/.harness/projects/<repo-id>/` 中记录项目事件和记忆，不污染当前仓库。
+- 从 `~/.harness/projects/<repo-id>/context/` 注入项目记忆。
+- 通过 hooks 记录用户纠正、工具失败、文件修改、compact/session 事件。
 - 在中高风险计划和最终 diff 前后插入 Codex review gate。
-- 记录链接、踩坑、约束和决策，避免后续重复犯错。
+- 后续由后台 compactor 把事件压缩为链接、踩坑、约束和决策，避免后续重复犯错。
 
 不要把 Harness 当成 Superpowers 的替代品。Harness 的职责是包装 Superpowers，不是复制 Superpowers。
 
 ## 必走流程
 
-1. 先用 `harness_state.py` 创建或恢复 active Harness project。
-2. 做任何重活之前，先读 active project 的关键文件。
+1. 启动时优先使用 SessionStart 注入的 `<harness-memory>`。
+2. 做任何重活之前，先看 Harness memory root 中的 `context/` 是否已有足够背景，不要默认从零扫描项目。
 3. 工程流程继续使用 Superpowers：
    - 有创意、设计、功能、行为变化时，先用 `superpowers:brainstorming`。
    - 多步骤实现前，用 `superpowers:writing-plans`。
@@ -28,16 +28,13 @@ Harness 是一层项目本地工作流。它包在 Superpowers 外面，用来�
 4. 插入 Harness gate：
    - 中高风险计划执行前，走 plan gate。
    - 中高风险工作完成前，走 final gate。
-5. 停止工作前，更新：
-   - `.harness/projects/<active>/status.md`
-   - `.harness/projects/<active>/next-actions.md`
-   - `.harness/projects/<active>/handoff.md`
-6. 出现新的长期有效信息时，更新项目记忆：
-   - `.harness/context/links.md`
-   - `.harness/context/pitfalls.md`
-   - `.harness/context/decisions.md`
-   - `.harness/context/constraints.md`
-   - `.harness/context/commands.md`
+5. 出现新的长期有效信息时，优先写入 Harness memory root：
+   - `context/links.md`
+   - `context/pitfalls.md`
+   - `context/decisions.md`
+   - `context/constraints.md`
+   - `context/commands.md`
+6. 普通工具事件不手动写 md；hooks 会先写入 `events/*.jsonl`。
 
 ## 任务模式
 
@@ -114,7 +111,7 @@ codex exec review --base <base-branch> -m gpt-5.5 -c 'model_reasoning_effort="hi
 只读取当前任务真正需要的 reference：
 
 - `references/workflow.md`: 整体链式流程。
-- `references/project-memory.md`: `.harness/context` 的记忆规则。
+- `references/project-memory.md`: `~/.harness/projects/<repo-id>/context` 的记忆规则。
 - `references/model-routing.md`: DeepSeek、Codex、MiniMax 的角色分工。
 - `references/codex-gates.md`: plan/final review gate。
 - `references/superpowers-integration.md`: Harness 如何包住 Superpowers。

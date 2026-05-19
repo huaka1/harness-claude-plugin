@@ -9,8 +9,18 @@ description: "用 Codex/GPT-5.5 high 对当前 Harness plan 做设计/计划评�
 运行：
 
 ```bash
-active="$(cat .harness/active-project)"
-project=".harness/projects/$active"
+state_script="$(find "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/plugins/cache" "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/plugins/marketplaces" -path "*/scripts/harness_state.py" -print 2>/dev/null | sort | tail -n 1)"
+if [ -z "$state_script" ] || [ ! -f "$state_script" ]; then
+  echo "找不到 Harness state script。请重装：claude plugin uninstall harness --scope user -y && claude plugin install harness@harness --scope user"
+  exit 1
+fi
+root="$(python3 "$state_script" root --cwd "$PWD")"
+active="$(cat "$root/active-project" 2>/dev/null || true)"
+if [ -z "$active" ]; then
+  echo "当前仓库没有 active Harness workflow project。可以先运行 /harness <目标>，或者直接用 Superpowers plan。"
+  exit 1
+fi
+project="$root/projects/$active"
 out="$project/reviews/codex-plan-review.md"
 mkdir -p "$project/reviews"
 
@@ -41,10 +51,10 @@ mkdir -p "$project/reviews"
     "$project/planning/spec.md" \
     "$project/planning/plan.md" \
     "$project/planning/plan.json" \
-    ".harness/context/constraints.md" \
-    ".harness/context/decisions.md" \
-    ".harness/context/pitfalls.md" \
-    ".harness/context/links.md"
+    "$root/context/constraints.md" \
+    "$root/context/decisions.md" \
+    "$root/context/pitfalls.md" \
+    "$root/context/links.md"
   do
     echo
     echo "## $f"

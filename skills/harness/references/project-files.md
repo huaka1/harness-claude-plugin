@@ -3,13 +3,18 @@
 每个代码仓库可以有自己的：
 
 ```text
-.harness/
+~/.harness/projects/<repo-id>/
   config.yaml
   active-project
   index.md
+  repo.json
+  state.json
+  events/
   context/
   projects/
 ```
+
+Harness 默认使用全局目录，不在当前仓库创建 `.harness/`。
 
 ## Project Workspace
 

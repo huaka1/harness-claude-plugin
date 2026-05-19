@@ -1,16 +1,16 @@
 {
   "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
   "name": "harness",
-  "version": "0.1.6",
-  "description": "Claude Code 项目本地工作流插件集合",
+  "version": "0.2.0",
+  "description": "Claude Code 无感项目记忆增强插件集合",
   "owner": {
     "name": "huangaokai"
   },
   "plugins": [
     {
       "name": "harness",
-      "description": "围绕 Superpowers 的项目本地工作流插件，提供项目记忆、handoff 和 Codex review gate",
-      "version": "0.1.6",
+      "description": "Claude Code 无感项目记忆增强层，提供 hooks 事件记录、启动记忆注入和 Codex review gate",
+      "version": "0.2.0",
       "source": "./",
       "category": "productivity",
       "author": {

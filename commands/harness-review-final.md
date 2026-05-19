@@ -13,8 +13,18 @@ description: "用 Codex/GPT-5.5 high 对 active Harness project 做最终代码�
 运行：
 
 ```bash
-active="$(cat .harness/active-project)"
-project=".harness/projects/$active"
+state_script="$(find "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/plugins/cache" "${CLAUDE_CONFIG_DIR:-$HOME/.claude}/plugins/marketplaces" -path "*/scripts/harness_state.py" -print 2>/dev/null | sort | tail -n 1)"
+if [ -z "$state_script" ] || [ ! -f "$state_script" ]; then
+  echo "找不到 Harness state script。请重装：claude plugin uninstall harness --scope user -y && claude plugin install harness@harness --scope user"
+  exit 1
+fi
+root="$(python3 "$state_script" root --cwd "$PWD")"
+active="$(cat "$root/active-project" 2>/dev/null || true)"
+if [ -z "$active" ]; then
+  echo "当前仓库没有 active Harness workflow project。final review 仍可做，但缺少 Harness plan/change 上下文；请先运行 /harness <目标> 或明确要求只按 git diff review。"
+  exit 1
+fi
+project="$root/projects/$active"
 out="$project/reviews/codex-final-review.md"
 mkdir -p "$project/reviews"
 
@@ -51,7 +61,7 @@ Base branch: $base_branch
 - accepted plan: $project/planning/plan.md
 - changes: $project/implementation/changes.md
 - verification: $project/implementation/verification.md
-- known constraints/pitfalls: .harness/context/
+- known constraints/pitfalls: $root/context/
 
 重点检查：
 1. 是否偏离 goal 或 accepted plan

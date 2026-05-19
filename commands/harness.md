@@ -1,5 +1,5 @@
 ---
-description: "启动或继续一个 Harness 项目工作流"
+description: "查看或启动当前仓库的 Harness 全局记忆/增强工作流"
 argument-hint: "<目标或继续请求>"
 ---
 
@@ -24,13 +24,10 @@ fi
 python3 "$state_script" start --cwd "$PWD" --goal "$ARGUMENTS"
 ```
 
-2. 读取命令输出，把它当成本次会话的权威 Harness project 状态。
-3. 如果输出显示恢复了已有 project，就从 `handoff.md`、`status.md`、`next-actions.md` 继续。
-4. 如果创建了新 project，先判断任务模式；涉及设计、实现或行为变化时，使用 `superpowers:brainstorming`。
-5. brainstorming 后，如果是多步骤实现，使用 `superpowers:writing-plans`。
-6. 中高风险计划执行前，运行 `/harness-review-plan`。
-7. 执行阶段优先使用 Superpowers 的 `executing-plans` 或 `subagent-driven-development`。
-8. 中高风险工作交接前，运行 `/harness-review-final`。
-9. 停止前保持 `.harness/projects/<project>/handoff.md`、`status.md`、`next-actions.md` 更新。
+2. 读取命令输出，把它当成本次会话的权威 Harness memory root。
+3. 默认不要在当前仓库创建 `.harness/`；Harness 记忆存放在 `~/.harness/projects/<repo-id>/`。
+4. 如果只是普通工作，继续按 Claude Code / Superpowers 正常流程执行。
+5. 中高风险计划执行前，可以运行 `/harness-review-plan`。
+6. 中高风险代码完成后，可以运行 `/harness-review-final`。
 
-不要把 Harness 当成 Superpowers 的替代品。Harness 只负责在 Superpowers 外围提供项目记忆、模型路由、review gate 和 handoff 纪律。
+不要把 Harness 当成 Superpowers 的替代品。Harness 的默认职责是无感记录事件、注入项目记忆和提供 review gate。

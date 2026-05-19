@@ -12,10 +12,11 @@ Harness 包住 Superpowers，不复制、不 fork Superpowers skills。
 
 Harness 额外补充：
 
-- 项目本地记忆。
-- `.harness/projects` 工作区。
+- 全局项目记忆：`~/.harness/projects/<repo-id>/context`。
+- 原始事件记录：`~/.harness/projects/<repo-id>/events`。
+- 可选 workflow project：`~/.harness/projects/<repo-id>/projects`。
 - Codex plan/final gate。
-- hook 提醒和 handoff。
+- hook 事件记录和启动记忆注入。
 - 长期 lesson、links、pitfalls、decisions。
 
 如果 Superpowers 已经自然往后推进，不要打断它。Harness 只在自然检查点插入 gate：计划生成后、最终完成前。

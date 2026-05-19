@@ -1,5 +1,5 @@
 ---
-description: "查看当前 active Harness project 和 handoff"
+description: "查看当前仓库的 Harness 全局记忆位置和状态"
 ---
 
 运行：
@@ -13,4 +13,4 @@ fi
 python3 "$state_script" status --cwd "$PWD"
 ```
 
-根据输出总结当前 active project、状态、下一步行动，以及相关项目记忆。除非用户要求，不要扫描完整代码仓库。
+根据输出总结当前仓库的 Harness memory root、active workflow project（如果存在）和相关项目记忆。除非用户要求，不要扫描完整代码仓库。

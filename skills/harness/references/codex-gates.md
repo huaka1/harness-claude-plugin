@@ -15,7 +15,7 @@ codex exec \
   -s read-only \
   --skip-git-repo-check \
   --ephemeral \
-  -o .harness/projects/<active>/reviews/codex-plan-review.md \
+  -o ~/.harness/projects/<repo-id>/projects/<active>/reviews/codex-plan-review.md \
   -
 ```
 
@@ -31,7 +31,7 @@ codex exec \
 输出保存到：
 
 ```text
-.harness/projects/<active>/reviews/codex-plan-review.md
+~/.harness/projects/<repo-id>/projects/<active>/reviews/codex-plan-review.md
 ```
 
 如果发现 critical 或 important 问题，先修计划，再执行。
@@ -50,7 +50,7 @@ codex exec review \
   -m gpt-5.5 \
   -c 'model_reasoning_effort="high"' \
   --ephemeral \
-  -o .harness/projects/<active>/reviews/codex-final-review.md \
+  -o ~/.harness/projects/<repo-id>/projects/<active>/reviews/codex-final-review.md \
   -
 ```
 
@@ -66,7 +66,7 @@ codex exec review \
 输出保存到：
 
 ```text
-.harness/projects/<active>/reviews/codex-final-review.md
+~/.harness/projects/<repo-id>/projects/<active>/reviews/codex-final-review.md
 ```
 
 根据 review 结果判断是否需要继续修。

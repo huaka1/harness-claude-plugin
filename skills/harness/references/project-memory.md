@@ -1,8 +1,10 @@
 # 项目记忆
 
-`.harness/context/` 是长期项目记忆。对工程工作来说，项目内记忆通常比跨项目个人记忆更重要。
+`~/.harness/projects/<repo-id>/context/` 是长期项目记忆。对工程工作来说，项目维度记忆通常比跨项目个人记忆更重要。
 
 它用来避免反复调研、反复踩同一个坑。
+
+Harness 默认不在当前仓库创建 `.harness/`。项目内 `.harness/` 只应该作为显式导出/共享能力出现。
 
 ## 文件说明
 
@@ -15,6 +17,21 @@
 - `links.md`: 权威链接，以及什么时候必须重新打开。
 - `glossary.md`: 项目术语。
 - `lessons/`: 当一个坑太长，无法放进 `pitfalls.md` 时写成独立 lesson。
+
+## 原始事件
+
+hooks 会先把原始事件写入：
+
+```text
+~/.harness/projects/<repo-id>/events/
+  user-prompts.jsonl
+  tool-uses.jsonl
+  tool-failures.jsonl
+  file-changes.jsonl
+  session-events.jsonl
+```
+
+这些不是最终记忆。后续 compactor 会从事件中提炼稳定事实、命令、坑、决策、约束和链接。
 
 ## 链接记录模板
 
