@@ -31,7 +31,20 @@ hooks 会先把原始事件写入：
   session-events.jsonl
 ```
 
-这些不是最终记忆。后续 compactor 会从事件中提炼稳定事实、命令、坑、决策、约束和链接。
+这些不是最终记忆。`/harness-compact` 会从事件中提炼稳定事实、命令、坑、决策、约束和链接。
+
+## 压缩方式
+
+```text
+/harness-compact auto
+  -> 优先 mmx-cli / MiniMax
+  -> 失败时降级到本地规则
+
+/harness-compact rules
+  -> 不调用模型，只用关键词和事件类型提炼候选记忆
+```
+
+不要把所有事件都写进 md。只有稳定、可复用、未来能减少重复读项目或重复犯错的信息才进入 `context/`。
 
 ## 链接记录模板
 

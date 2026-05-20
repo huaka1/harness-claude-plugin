@@ -1,7 +1,7 @@
 {
   "name": "harness",
   "description": "Claude Code 无感项目记忆增强层，提供 hooks 事件记录、启动记忆注入和 Codex review gate",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "author": {
     "name": "huangaokai"
   },

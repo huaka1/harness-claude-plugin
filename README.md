@@ -61,6 +61,7 @@ claude plugin validate /Users/huangaokai/Documents/code/agent-study/harness/clau
 - `/harness <goal>`: 查看或创建当前仓库的 Harness 全局记忆/可选 workflow project。
 - `/harness-status`: 查看当前仓库的 Harness memory root 和状态。
 - `/harness-resume [query]`: 恢复 active 或匹配的 project。
+- `/harness-compact [auto|mmx|rules|dry-run]`: 把原始事件压缩进长期项目记忆。
 - `/harness-review-plan`: 运行计划评审关卡。
 - `/harness-review-final`: 运行最终评审关卡。
 
@@ -93,7 +94,26 @@ Harness 默认不会在当前代码仓库里创建 `.harness/`。它写入全局
   projects/
 ```
 
-Claude Code 启动时，`SessionStart` hook 会读取 `context/` 并注入 `<harness-memory>`。事件先进入 `events/*.jsonl`，后续由后台 compactor 压缩成长期记忆。
+Claude Code 启动时，`SessionStart` hook 会读取 `context/` 并注入 `<harness-memory>`。事件先进入 `events/*.jsonl`，再用 `/harness-compact` 压缩成长期记忆。
+
+## Compactor
+
+Harness compactor 支持三种模式：
+
+```bash
+/harness-compact auto     # 默认，优先 mmx-cli，失败降级 rules
+/harness-compact mmx      # 强制使用 mmx text chat
+/harness-compact rules    # 只用本地规则，不调用模型
+/harness-compact dry-run  # 只预览候选记忆，不写 context
+```
+
+`mmx` 模式使用 `mmx-cli`：
+
+```bash
+mmx text chat --messages-file <file> --output json --quiet --non-interactive
+```
+
+第一版不会在 hook 里同步调用 MiniMax，避免网络或模型延迟影响 Claude Code 正常工作。后续可以接 launchd daemon 定时运行 `compact --if-needed`。
 
 ## 专家模板
 
@@ -103,4 +123,4 @@ Claude Code 启动时，`SessionStart` hook 会读取 `context/` 并注入 `<har
 
 ## MVP 限制
 
-当前版本已经实现全局事件记录和 SessionStart 记忆注入，但还没有实现后台 MiniMax/便宜模型 compactor、自动 Codex 调用或模型 proxy。
+当前版本已经实现全局事件记录、SessionStart 记忆注入和手动 compactor。后台 daemon、自动 Codex 调用和模型 proxy 还没有实现。
