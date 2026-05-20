@@ -13,6 +13,7 @@ Harness 是 Claude Code 的全局项目记忆增强层。它通过 hooks 无感�
 - 从 `~/.harness/projects/<repo-id>/context/` 注入项目记忆。
 - 通过 hooks 记录用户纠正、工具失败、文件修改、compact/session 事件。
 - 通过 `/harness-compact` 使用 `mmx-cli` 或本地规则把原始事件压缩进长期记忆。
+- 通过 `/harness-daemon install` 安装 launchd 后台定时压缩任务。
 - 在中高风险计划和最终 diff 前后插入 Codex review gate。
 - compactor 把事件压缩为链接、踩坑、约束和决策，避免后续重复犯错。
 

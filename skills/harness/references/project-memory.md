@@ -46,6 +46,16 @@ hooks 会先把原始事件写入：
 
 不要把所有事件都写进 md。只有稳定、可复用、未来能减少重复读项目或重复犯错的信息才进入 `context/`。
 
+## 后台任务
+
+`/harness-daemon install` 会安装 macOS 用户级 LaunchAgent：
+
+```text
+~/Library/LaunchAgents/com.huaka1.harness.compactor.plist
+```
+
+它每 5 分钟扫描 `~/.harness/projects/*/state.json`，只压缩 `needs_compaction=true` 的项目。日志写到 `~/.harness/logs/`。
+
 ## 链接记录模板
 
 ```text

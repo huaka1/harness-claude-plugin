@@ -6,6 +6,7 @@ import datetime as dt
 import hashlib
 import json
 import os
+import plistlib
 import re
 import shutil
 import subprocess
@@ -88,6 +89,8 @@ EVENT_FILES = [
     "tool-uses.jsonl",
     "session-events.jsonl",
 ]
+
+LAUNCHD_LABEL = "com.huaka1.harness.compactor"
 
 
 def now() -> dt.datetime:
@@ -807,48 +810,184 @@ def reset_pending_after_compaction(root: Path, offsets: dict[str, int], engine: 
     write_json(state_path, state)
 
 
-def compact(args: argparse.Namespace) -> None:
-    cwd = Path(args.cwd).resolve()
-    root = harness_root(cwd)
-    ensure_structure(root, cwd)
+def compact_root(
+    root: Path,
+    engine: str,
+    model: str,
+    timeout: int,
+    max_events: int,
+    if_needed: bool,
+    dry_run: bool = False,
+) -> list[str]:
     state = read_json(root / "state.json")
 
-    if args.if_needed and not state.get("needs_compaction"):
-        print(f"No compaction needed for {root}")
-        return
+    if if_needed and not state.get("needs_compaction"):
+        return [f"No compaction needed for {root}"]
 
-    events_by_file, offsets = collect_new_events(root, args.max_events)
+    events_by_file, offsets = collect_new_events(root, max_events)
     events = flatten_events(events_by_file)
     if not events:
-        print(f"No new Harness events to compact for {root}")
-        return
+        return [f"No new Harness events to compact for {root}"]
 
-    engine_used = args.engine
-    memory: dict[str, list[str]] = {}
-    if args.engine in {"mmx", "auto"}:
+    engine_used = engine
+    if engine in {"mmx", "auto"}:
         try:
-            memory = run_mmx_compactor(root, events, args.model, args.timeout)
+            memory = run_mmx_compactor(root, events, model, timeout)
             engine_used = "mmx"
         except Exception as exc:
-            if args.engine == "mmx":
+            if engine == "mmx":
                 raise
             engine_used = f"rules-after-mmx-failed:{type(exc).__name__}"
             memory = rule_based_memory(events)
     else:
         memory = rule_based_memory(events)
 
-    if args.dry_run:
-        print(json.dumps(memory, ensure_ascii=False, indent=2))
-        return
+    if dry_run:
+        return [json.dumps(memory, ensure_ascii=False, indent=2)]
 
     changed = append_memory(root, memory, engine_used, len(events))
     reset_pending_after_compaction(root, offsets, engine_used, changed)
     if changed:
-        print("Compacted Harness events into:")
-        for path in changed:
-            print(f"- {path}")
+        return ["Compacted Harness events into:", *[f"- {path}" for path in changed]]
+    return [f"Compacted {len(events)} Harness events; no new durable memory extracted."]
+
+
+def compact(args: argparse.Namespace) -> None:
+    cwd = Path(args.cwd).resolve()
+    root = harness_root(cwd)
+    ensure_structure(root, cwd)
+    for line in compact_root(root, args.engine, args.model, args.timeout, args.max_events, args.if_needed, args.dry_run):
+        print(line)
+
+
+def iter_memory_roots(home: Path) -> list[Path]:
+    projects = home / "projects"
+    if not projects.exists():
+        return []
+    return sorted(path.parent for path in projects.glob("*/state.json"))
+
+
+def daemon_once(args: argparse.Namespace) -> None:
+    home = Path(args.home).expanduser().resolve() if args.home else harness_home()
+    (home / "logs").mkdir(parents=True, exist_ok=True)
+    roots = iter_memory_roots(home)
+    processed = 0
+    errors = 0
+    for root in roots:
+        try:
+            lines = compact_root(root, args.engine, args.model, args.timeout, args.max_events, args.if_needed, False)
+            if not (len(lines) == 1 and lines[0].startswith("No compaction needed")):
+                processed += 1
+                for line in lines:
+                    print(line)
+        except Exception as exc:
+            errors += 1
+            append_jsonl(
+                home / "logs" / "compactor-errors.jsonl",
+                {
+                    "ts": iso_now(),
+                    "root": str(root),
+                    "error_type": type(exc).__name__,
+                    "error": str(exc),
+                },
+            )
+            print(f"ERROR compacting {root}: {type(exc).__name__}: {exc}", file=sys.stderr)
+    print(f"Harness daemon pass complete: roots={len(roots)} processed={processed} errors={errors}")
+
+
+def launch_agent_path() -> Path:
+    return Path.home() / "Library" / "LaunchAgents" / f"{LAUNCHD_LABEL}.plist"
+
+
+def launch_agent_plist(script: Path, home: Path, interval: int, engine: str, model: str, timeout: int, max_events: int) -> dict[str, Any]:
+    logs = home / "logs"
+    return {
+        "Label": LAUNCHD_LABEL,
+        "ProgramArguments": [
+            "/usr/bin/python3",
+            str(script),
+            "daemon-once",
+            "--home",
+            str(home),
+            "--engine",
+            engine,
+            "--model",
+            model,
+            "--timeout",
+            str(timeout),
+            "--max-events",
+            str(max_events),
+            "--if-needed",
+        ],
+        "StartInterval": interval,
+        "RunAtLoad": True,
+        "StandardOutPath": str(logs / "compactor.out.log"),
+        "StandardErrorPath": str(logs / "compactor.err.log"),
+        "EnvironmentVariables": {
+            "PATH": os.environ.get("PATH", "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"),
+            "HARNESS_HOME": str(home),
+        },
+    }
+
+
+def launchctl(*args: str, check: bool = False) -> subprocess.CompletedProcess[str]:
+    return subprocess.run(["launchctl", *args], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, check=check)
+
+
+def daemon_install(args: argparse.Namespace) -> None:
+    home = Path(args.home).expanduser().resolve() if args.home else harness_home()
+    logs = home / "logs"
+    logs.mkdir(parents=True, exist_ok=True)
+    plist_path = launch_agent_path()
+    plist_path.parent.mkdir(parents=True, exist_ok=True)
+    script = Path(__file__).resolve()
+    plist = launch_agent_plist(script, home, args.interval, args.engine, args.model, args.timeout, args.max_events)
+    with plist_path.open("wb") as fh:
+        plistlib.dump(plist, fh, sort_keys=False)
+
+    launchctl("unload", str(plist_path), check=False)
+    loaded = launchctl("load", str(plist_path), check=False)
+    print(f"Installed Harness compactor LaunchAgent: {plist_path}")
+    print(f"Interval: {args.interval}s, engine={args.engine}, home={home}")
+    print(f"Logs: {logs / 'compactor.out.log'} ; {logs / 'compactor.err.log'}")
+    if loaded.returncode != 0:
+        print((loaded.stderr or loaded.stdout).strip() or "launchctl load failed", file=sys.stderr)
+
+
+def daemon_uninstall(args: argparse.Namespace) -> None:
+    plist_path = launch_agent_path()
+    if plist_path.exists():
+        launchctl("unload", str(plist_path), check=False)
+        plist_path.unlink()
+        print(f"Removed Harness compactor LaunchAgent: {plist_path}")
     else:
-        print(f"Compacted {len(events)} Harness events; no new durable memory extracted.")
+        print(f"Harness compactor LaunchAgent is not installed: {plist_path}")
+
+
+def daemon_status(args: argparse.Namespace) -> None:
+    plist_path = launch_agent_path()
+    result = launchctl("list", check=False)
+    loaded = LAUNCHD_LABEL in result.stdout
+    home = Path(args.home).expanduser().resolve() if args.home else harness_home()
+    print(f"LaunchAgent plist: {plist_path}")
+    print(f"Installed: {plist_path.exists()}")
+    print(f"Loaded: {loaded}")
+    print(f"Harness home: {home}")
+    print(f"Logs: {home / 'logs' / 'compactor.out.log'} ; {home / 'logs' / 'compactor.err.log'}")
+
+
+def daemon(args: argparse.Namespace) -> None:
+    action = args.action
+    if action == "install":
+        daemon_install(args)
+    elif action == "uninstall":
+        daemon_uninstall(args)
+    elif action == "status":
+        daemon_status(args)
+    elif action == "run-once":
+        daemon_once(args)
+    else:
+        raise SystemExit(f"unknown daemon action: {action}")
 
 
 def record_event(args: argparse.Namespace) -> None:
@@ -999,6 +1138,26 @@ def build_parser() -> argparse.ArgumentParser:
     compact_cmd.add_argument("--if-needed", action="store_true")
     compact_cmd.add_argument("--dry-run", action="store_true")
     compact_cmd.set_defaults(func=compact)
+
+    daemon_once_cmd = sub.add_parser("daemon-once")
+    daemon_once_cmd.add_argument("--home", default="")
+    daemon_once_cmd.add_argument("--engine", choices=["auto", "mmx", "rules"], default="auto")
+    daemon_once_cmd.add_argument("--model", default=os.environ.get("HARNESS_MMX_MODEL", "MiniMax-M2.7"))
+    daemon_once_cmd.add_argument("--timeout", type=int, default=120)
+    daemon_once_cmd.add_argument("--max-events", type=int, default=80)
+    daemon_once_cmd.add_argument("--if-needed", action="store_true")
+    daemon_once_cmd.set_defaults(func=daemon_once)
+
+    daemon_cmd = sub.add_parser("daemon")
+    daemon_cmd.add_argument("action", choices=["install", "uninstall", "status", "run-once"])
+    daemon_cmd.add_argument("--home", default="")
+    daemon_cmd.add_argument("--interval", type=int, default=300)
+    daemon_cmd.add_argument("--engine", choices=["auto", "mmx", "rules"], default="auto")
+    daemon_cmd.add_argument("--model", default=os.environ.get("HARNESS_MMX_MODEL", "MiniMax-M2.7"))
+    daemon_cmd.add_argument("--timeout", type=int, default=120)
+    daemon_cmd.add_argument("--max-events", type=int, default=80)
+    daemon_cmd.add_argument("--if-needed", action="store_true")
+    daemon_cmd.set_defaults(func=daemon)
 
     stop_cmd = sub.add_parser("stop")
     stop_cmd.add_argument("--cwd", required=True)

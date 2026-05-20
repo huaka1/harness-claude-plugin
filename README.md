@@ -62,6 +62,7 @@ claude plugin validate /Users/huangaokai/Documents/code/agent-study/harness/clau
 - `/harness-status`: 查看当前仓库的 Harness memory root 和状态。
 - `/harness-resume [query]`: 恢复 active 或匹配的 project。
 - `/harness-compact [auto|mmx|rules|dry-run]`: 把原始事件压缩进长期项目记忆。
+- `/harness-daemon [install|uninstall|status|run-once]`: 管理后台定时压缩任务。
 - `/harness-review-plan`: 运行计划评审关卡。
 - `/harness-review-final`: 运行最终评审关卡。
 
@@ -113,7 +114,33 @@ Harness compactor 支持三种模式：
 mmx text chat --messages-file <file> --output json --quiet --non-interactive
 ```
 
-第一版不会在 hook 里同步调用 MiniMax，避免网络或模型延迟影响 Claude Code 正常工作。后续可以接 launchd daemon 定时运行 `compact --if-needed`。
+不会在 hook 里同步调用 MiniMax，避免网络或模型延迟影响 Claude Code 正常工作。可以使用 `/harness-daemon install` 安装 macOS 用户级 LaunchAgent，每 5 分钟自动运行一次 `daemon-once --if-needed`。
+
+## 后台定时压缩
+
+安装后台任务：
+
+```bash
+/harness-daemon install
+```
+
+默认会写入：
+
+```text
+~/Library/LaunchAgents/com.huaka1.harness.compactor.plist
+~/.harness/logs/compactor.out.log
+~/.harness/logs/compactor.err.log
+```
+
+后台任务每 5 分钟扫描 `~/.harness/projects/*/state.json`，只处理 `needs_compaction=true` 的项目。
+
+常用操作：
+
+```bash
+/harness-daemon status
+/harness-daemon run-once
+/harness-daemon uninstall
+```
 
 ## 专家模板
 
@@ -123,4 +150,4 @@ mmx text chat --messages-file <file> --output json --quiet --non-interactive
 
 ## MVP 限制
 
-当前版本已经实现全局事件记录、SessionStart 记忆注入和手动 compactor。后台 daemon、自动 Codex 调用和模型 proxy 还没有实现。
+当前版本已经实现全局事件记录、SessionStart 记忆注入、手动 compactor 和 macOS launchd 后台定时压缩。自动 Codex 调用和模型 proxy 还没有实现。
