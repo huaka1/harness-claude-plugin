@@ -1,5 +1,5 @@
 <svg width="1200" height="680" viewBox="0 0 1200 680" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-labelledby="title desc">
-  <title id="title">Harness Claude Plugin 工作原理</title>
+  <title id="title">Harness Claude 插件工作原理</title>
   <desc id="desc">这张图展示 Claude Code hooks 如何把项目事件写入 Harness 全局目录，再由压缩器沉淀为项目记忆，并在后续会话启动时重新注入给 Claude Code。</desc>
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1200" y2="680" gradientUnits="userSpaceOnUse">
@@ -33,7 +33,7 @@
 
   <rect width="1200" height="680" rx="28" fill="url(#bg)"/>
 
-  <text x="64" y="70" class="title">Harness Claude Plugin</text>
+  <text x="64" y="70" class="title">Harness Claude 插件</text>
   <text x="64" y="102" class="subtitle">给 Claude Code 增加项目记忆：记录事件、压缩上下文、在未来会话中重新注入。</text>
 
   <rect x="64" y="158" width="270" height="170" rx="18" class="card"/>
@@ -47,12 +47,12 @@
 
   <rect x="462" y="144" width="276" height="198" rx="18" class="card"/>
   <rect x="486" y="170" width="122" height="30" rx="15" fill="url(#blue)"/>
-  <text x="506" y="190" class="pill">Claude Hooks</text>
+  <text x="506" y="190" class="pill">Claude 钩子</text>
   <text x="486" y="229" class="box-title">会话内快速链路</text>
-  <text x="486" y="258" class="box-text">UserPromptSubmit</text>
-  <text x="486" y="281" class="box-text">PostToolUse</text>
-  <text x="486" y="304" class="box-text">Stop / SessionEnd</text>
-  <text x="486" y="327" class="box-text">SessionStart 注入</text>
+  <text x="486" y="258" class="box-text">提交用户提示</text>
+  <text x="486" y="281" class="box-text">工具调用结束</text>
+  <text x="486" y="304" class="box-text">会话停止/结束</text>
+  <text x="486" y="327" class="box-text">启动时注入记忆</text>
 
   <rect x="866" y="134" width="270" height="224" rx="18" class="card"/>
   <text x="894" y="178" class="box-title">全局记忆目录</text>
@@ -85,7 +85,7 @@
   <path d="M964 360 C900 430 822 474 858 494" class="dash"/>
   <text x="904" y="430" class="label">压缩沉淀</text>
   <path d="M454 510 C488 510 504 510 534 510" class="line"/>
-  <text x="474" y="489" class="label">写入 context</text>
+  <text x="474" y="489" class="label">写入记忆</text>
   <path d="M548 442 C466 360 396 310 336 278" class="dash"/>
   <text x="404" y="368" class="label">下次会话注入</text>
 

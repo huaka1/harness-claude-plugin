@@ -1,11 +1,11 @@
-# Harness Claude Plugin
+# Harness Claude 插件
 
 Harness 是一个 Claude Code 插件，用来给每个代码仓库增加一层轻量级项目记忆。
 
 它通过 Claude Code hooks 记录有价值的开发事件，把这些事件压缩成长期 Markdown 记忆，并在后续新会话启动时重新注入给 Claude Code，减少重复读项目、重复踩坑和重复解释背景。
 
 <p align="center">
-  <img src="docs/diagrams/harness-overview.svg" alt="Harness 工作原理图" width="860">
+  <img src="docs/diagrams/harness-overview-cn.svg" alt="Harness 工作原理图" width="860">
 </p>
 
 ## 为什么需要 Harness？
