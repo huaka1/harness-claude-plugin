@@ -1,74 +1,127 @@
 # Harness Claude Plugin
 
-Harness 是一个 Claude Code 插件，用 hooks 做无感项目记忆增强，并保留可选的 Superpowers / Codex review gate 工作流。
+Harness is a Claude Code plugin that gives each repository a lightweight project memory layer.
 
-## 通过 Claude Code Marketplace UI 安装
+It records useful development events through Claude Code hooks, compacts them into durable Markdown notes, and injects those notes back into future Claude Code sessions so agents do not have to rediscover the same project context every time.
 
-在 Claude Code 里打开 `/plugins`，选择 **Add Marketplace**，输入：
+<p align="center">
+  <img src="docs/diagrams/harness-overview.svg" alt="Harness architecture diagram" width="860">
+</p>
+
+## Why Harness?
+
+Claude Code is good at reading a codebase, but large projects often make agents repeat the same discovery work:
+
+- Which commands are safe to run?
+- Which architecture decisions already exist?
+- Which deployment or test failures happened before?
+- Which links, docs, and constraints did the user already provide?
+
+Harness turns those repeated discoveries into compact project memory under `~/.harness/projects/<repo-id>/context/`, then injects the memory at session start through a `SessionStart` hook.
+
+## Features
+
+- **Global project memory**: stores memory outside the repository by default, under `~/.harness/projects/<repo-id>/`.
+- **Automatic event capture**: records user prompts, tool use, tool failures, file edits, and session events through hooks.
+- **SessionStart injection**: injects compacted memory as `<harness-memory>` when Claude Code starts, clears, or compacts a session.
+- **Background compaction**: optional macOS LaunchAgent periodically compacts raw events into Markdown memory.
+- **MiniMax support**: can use `mmx-cli` as a cheap compaction model, with local rule-based fallback.
+- **Codex review gates**: optional plan/final review commands for high-risk work.
+- **Superpowers-friendly**: designed to wrap workflow plugins such as Superpowers rather than replace them.
+
+## Installation
+
+### Install from Claude Code Marketplace
+
+Open `/plugins` in Claude Code, choose **Add Marketplace**, and enter:
 
 ```text
 huaka1/harness-claude-plugin
 ```
 
-或者：
+Then install the `harness` plugin from that marketplace.
 
-```text
-https://github.com/huaka1/harness-claude-plugin
-```
-
-然后从这个 marketplace 里安装 `harness` 插件。
-
-对应 CLI 命令：
+Equivalent CLI commands:
 
 ```bash
 claude plugin marketplace add huaka1/harness-claude-plugin
-claude plugin install harness@harness
+claude plugin install harness@harness --scope user
+claude plugin enable harness@harness --scope user
 ```
 
-如果之前已经安装过旧版本，而 Claude Code 一直使用缓存里的旧插件，请重装：
+Restart Claude Code after installing or updating the plugin.
+
+### Update an Existing Install
 
 ```bash
 claude plugin marketplace update harness
-claude plugin uninstall harness --scope user -y
-claude plugin install harness@harness --scope user
+claude plugin update harness@harness
+claude plugin enable harness@harness --scope user
 ```
 
-## 通过 Git Clone 本地加载
+If Claude Code keeps using an old cached version:
 
-Claude Code 也可以直接从本地插件目录加载：
+```bash
+claude plugin uninstall harness@harness --scope user -y
+claude plugin install harness@harness --scope user
+claude plugin enable harness@harness --scope user
+```
+
+### Load from a Local Clone
 
 ```bash
 git clone https://github.com/huaka1/harness-claude-plugin.git ~/.claude/plugins/harness-claude-plugin
 claude --plugin-dir ~/.claude/plugins/harness-claude-plugin
 ```
 
-## 本地开发测试
+`--plugin-dir` is useful for development or one-off testing. For daily use, prefer the marketplace installation above so the plugin remains enabled across sessions.
 
-在当前仓库里运行：
+## Quick Start
 
-```bash
-claude --plugin-dir /Users/huangaokai/Documents/code/agent-study/harness/claude-plugin
+1. Install and enable the plugin.
+2. Open Claude Code inside a git repository.
+3. Ask a normal project question or run:
+
+```text
+/harness-status
 ```
 
-校验插件：
+You should see the memory root for the current repository:
 
-```bash
-claude plugin validate /Users/huangaokai/Documents/code/agent-study/harness/claude-plugin
+```text
+Harness memory root: ~/.harness/projects/<repo-id>
+Repo: /path/to/your/repo
 ```
 
-## 命令
+To verify session memory injection, start a new Claude Code session in the repository and ask:
 
-- `/harness <goal>`: 查看或创建当前仓库的 Harness 全局记忆/可选 workflow project。
-- `/harness-status`: 查看当前仓库的 Harness memory root 和状态。
-- `/harness-resume [query]`: 恢复 active 或匹配的 project。
-- `/harness-compact [auto|mmx|rules|dry-run]`: 把原始事件压缩进长期项目记忆。
-- `/harness-daemon [install|uninstall|status|run-once]`: 管理后台定时压缩任务。
-- `/harness-review-plan`: 运行计划评审关卡。
-- `/harness-review-final`: 运行最终评审关卡。
+```text
+Do not use tools. Can you see <harness-memory>? Reply with the Memory root and Repo root only.
+```
 
-## 全局记忆
+If injection is working, Claude should answer with the same memory root without reading files.
 
-Harness 默认不会在当前代码仓库里创建 `.harness/`。它写入全局目录：
+## How It Works
+
+Harness has two loops.
+
+The fast path runs during Claude Code sessions:
+
+1. `SessionStart` reads `context/*.md`.
+2. It returns hook JSON with `additionalContext`.
+3. Claude Code receives the compacted memory as `<harness-memory>`.
+4. Other hooks append raw events to `events/*.jsonl`.
+
+The slow path runs manually or in the background:
+
+1. `/harness-compact` or `/harness-daemon` scans pending raw events.
+2. A compactor extracts durable facts, commands, constraints, decisions, links, and pitfalls.
+3. The result is written back to `context/*.md`.
+4. The next session receives the improved memory.
+
+Harness does not put `.harness/` in your repository unless you explicitly build such a workflow yourself.
+
+## Memory Layout
 
 ```text
 ~/.harness/projects/<repo-id>/
@@ -90,41 +143,32 @@ Harness 默认不会在当前代码仓库里创建 `.harness/`。它写入全局
     pitfalls.md
     links.md
     glossary.md
-  active-project
-  index.md
   projects/
 ```
 
-Claude Code 启动时，`SessionStart` hook 会读取 `context/` 并注入 `<harness-memory>`。事件先进入 `events/*.jsonl`，再用 `/harness-compact` 压缩成长期记忆。
+`events/` contains raw, short-lived observations. `context/` contains durable memory that is safe and useful enough to inject into future sessions.
 
-## Compactor
+## Commands
 
-Harness compactor 支持三种模式：
+| Command | Purpose |
+| --- | --- |
+| `/harness-status` | Show the current repository memory root and state. |
+| `/harness <goal>` | Start or inspect an optional Harness workflow project. |
+| `/harness-resume [query]` | Resume a matching workflow project. |
+| `/harness-compact [auto|mmx|rules|dry-run]` | Compact raw events into long-term memory. |
+| `/harness-daemon [install|uninstall|status|run-once]` | Manage the background compactor. |
+| `/harness-review-plan` | Run a Codex-powered plan review gate. |
+| `/harness-review-final` | Run a Codex-powered final code review gate. |
 
-```bash
-/harness-compact auto     # 默认，优先 mmx-cli，失败降级 rules
-/harness-compact mmx      # 强制使用 mmx text chat
-/harness-compact rules    # 只用本地规则，不调用模型
-/harness-compact dry-run  # 只预览候选记忆，不写 context
-```
+## Background Compaction
 
-`mmx` 模式使用 `mmx-cli`：
+Install the macOS LaunchAgent:
 
-```bash
-mmx text chat --messages-file <file> --output json --quiet --non-interactive
-```
-
-不会在 hook 里同步调用 MiniMax，避免网络或模型延迟影响 Claude Code 正常工作。可以使用 `/harness-daemon install` 安装 macOS 用户级 LaunchAgent，每 5 分钟自动运行一次 `daemon-once --if-needed`。
-
-## 后台定时压缩
-
-安装后台任务：
-
-```bash
+```text
 /harness-daemon install
 ```
 
-默认会写入：
+It creates:
 
 ```text
 ~/Library/LaunchAgents/com.huaka1.harness.compactor.plist
@@ -132,22 +176,71 @@ mmx text chat --messages-file <file> --output json --quiet --non-interactive
 ~/.harness/logs/compactor.err.log
 ```
 
-后台任务每 5 分钟扫描 `~/.harness/projects/*/state.json`，只处理 `needs_compaction=true` 的项目。
+The daemon scans `~/.harness/projects/*/state.json` every few minutes and only processes repositories marked as needing compaction.
 
-常用操作：
+Manual controls:
 
-```bash
+```text
 /harness-daemon status
 /harness-daemon run-once
 /harness-daemon uninstall
 ```
 
-## 专家模板
+## Optional MiniMax Compaction
 
-`references/experts/` 提供中文专家模板，用来在计划阶段补充产品、架构、后端、前端、AI、数据、安全、测试、DevOps、API 和现实验收视角。
+Harness can use `mmx-cli` for cheap model-based compaction:
 
-专家模板参考并改写自 [msitarzewski/agency-agents](https://github.com/msitarzewski/agency-agents)，不是整库复制。使用时先看 `references/experts/registry.md`，只选择当前任务最相关的 2-4 个专家。
+```bash
+mmx auth status
+/harness-compact mmx
+```
 
-## MVP 限制
+Default mode is:
 
-当前版本已经实现全局事件记录、SessionStart 记忆注入、手动 compactor 和 macOS launchd 后台定时压缩。自动 Codex 调用和模型 proxy 还没有实现。
+```text
+/harness-compact auto
+```
+
+`auto` prefers MiniMax when available and falls back to local rules when it is not.
+
+## Codex Review Gates
+
+Harness includes two optional review gates:
+
+- `/harness-review-plan`: asks Codex to review a plan before high-risk implementation.
+- `/harness-review-final`: asks Codex to review the final diff, preferably against a base branch.
+
+These gates are intentionally explicit. Harness does not spend expensive review model calls unless you ask for them.
+
+## Security Notes
+
+Harness is designed to store durable project context, not secrets.
+
+Do not intentionally store API keys, passwords, tokens, private credentials, or customer data in `context/*.md`. Raw event capture should also avoid retaining full file contents when a path or short summary is enough.
+
+Before sharing `~/.harness` logs or memory files, review them for sensitive content.
+
+## Development
+
+Validate the plugin:
+
+```bash
+claude plugin validate /path/to/harness-claude-plugin
+```
+
+Run Claude Code with a local checkout:
+
+```bash
+claude --plugin-dir /path/to/harness-claude-plugin
+```
+
+Check installed state:
+
+```bash
+claude plugin list
+claude plugin details harness@harness
+```
+
+## License
+
+MIT
